@@ -9,6 +9,11 @@ from django.http import JsonResponse
 from .models import User
 from django.contrib.auth import authenticate
 from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP_200_OK
+from django.contrib.auth.models import User as DjangoUser
+from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth import get_user_model
+print(get_user_model().objects.all())
+
 
 
 
@@ -59,8 +64,8 @@ def Login_user(request):
     password = request.data.get("password")
     if email is None or password is None:
         return Response({'error': 'Please provide both email and password'},status=HTTP_400_BAD_REQUEST)
-    
-    user = authenticate(Username=email, password=password)
+    print(email, password)
+    user = authenticate(email=email, password=password)
     print(user)
    
     if not user:
