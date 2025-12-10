@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Train</title>
+    <style>
+        /* Container */
+.add-train-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    background: white;
+    padding: 25px 35px;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+
+/* Title */
+*{
+      font-family: "Nunito", sans-serif;
+       font-optical-sizing: auto;
+       font-style: normal;
+        font-weight: 200;
+}
+.form-title {
+    
+    text-align: center;
+    font-size: 28px;
+    font-weight: 700;
+    color: #0d6efd;
+    margin-bottom: 30px;
+}
+
+/* 3-Column Grid */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+}
+
+/* Form group styling */
+.form-group label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+    transition: 0.3s ease;
+    padding: 10px;
+}
+
+/* Input focus style */
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #0d6efd;
+    outline: none;
+    box-shadow: 0 0 5px rgba(13, 110, 253, 0.3);
+}
+
+/* Submit Button */
+.submit-btn {
+    display: block;
+    width: 200px;
+    margin: 35px auto 0;
+    background: #0d6efd;
+    color: white;
+    padding: 12px 0;
+    border: none;
+    border-radius: 6px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.submit-btn:hover {
+    background: #0b5ed7;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .form-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .form-grid {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
+.back-btn {
+    display: inline-block;
+    background: #6c757d;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 16px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    transition: 0.3s ease;
+    position: absolute;
+    top:0;
+    left:0;
+    margin: 10px;
+}
+
+.back-btn:hover {
+    background: #5a6268;
+    color: white;
+
+}
+.alert{
+    background-color: rgb(250, 143, 143);
+    color: black;
+    padding:10px;
+    border-radius:5px;
+    margin-bottom: 5px;
+
+}
+
+    </style>
+</head>
+<body>
+<a href="{% url 'adminhome' %}" class="back-btn">← Back to Home</a>
+
+<div class="container add-train-container">
+    <h2 class="form-title">Add Train</h2>
+
+    <form method="POST" class="add-train-form">
+        {% if messages %}
+    {% for msg in messages %}
+        <div class="alert">
+            {{ msg }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+        {% csrf_token %}
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Train Name</label>
+                <input type="text" name="train_name" required>
+            </div>
+
+            <div class="form-group">
+                <label>Train Number</label>
+                <input type="text" name="train_number" required>
+            </div>
+
+            <div class="form-group">
+                <label>From Place</label>
+                <input type="text" name="from_place" required>
+            </div>
+
+            <div class="form-group">
+                <label>To Place</label>
+                <input type="text" name="to_place" required>
+            </div>
+
+            <div class="form-group">
+                <label>Departure Time</label>
+                <input type="datetime-local" name="departure_time" required>
+            </div>
+
+            <div class="form-group">
+                <label>Arrival Time</label>
+                <input type="datetime-local" name="arrival_time" required>
+            </div>
+
+            <div class="form-group">
+                <label>Ticket Price</label>
+                <input type="number" name="ticket_price" required>
+            </div>
+
+            <div class="form-group">
+                <label>Total Seats</label>
+                <input type="number" name="total_seats" required>
+            </div>
+
+            <div class="form-group">
+                <label>Available Seats</label>
+                <input type="number" name="available_seats" required>
+            </div>
+
+            <div class="form-group">
+                <label>Is Active</label>
+                <select name="is_active">
+                    <option value="True">Active</option>
+                    <option value="False">Inactive</option>
+                </select>
+            </div>
+        </div>
+
+        <button type="submit" class="submit-btn">Add Train</button>
+    </form>
+</div>
+
+</html>

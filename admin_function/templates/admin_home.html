@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Home - Train List</title>
+    <style>
+        body{
+            margin: 0;
+            font-family: Arial;
+            background: #f2f2f2;
+        }
+        table{
+            width: 80%;
+            margin: 30px auto;
+            border-collapse: collapse;
+            background: #fff;
+            box-shadow: 0px 0px 10px #ccc;
+        }
+        th, td{
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        th{
+            background: #2980b9;
+            color: #fff;
+        }
+        h2{
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+/* Make button container flexbox for perfect alignment */
+.action-buttons {
+    display: flex;
+    gap: 10px;                /* Space between buttons */
+    justify-content: center;  /* Center align inside td */
+    flex-wrap: wrap;          /* Wrap buttons in small screen */
+    padding: 10px 0;
+}
+
+/* Common Button Style */
+.btn {
+    padding: 6px 14px;
+    text-decoration: none;
+    color: white;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    display: inline-block;
+    transition: 0.3s ease;
+    white-space: nowrap;       /* Prevent breaking */
+}
+
+/* Edit Button */
+.edit-btn {
+    background: #0d6efd;
+}
+.edit-btn:hover {
+    background: #0b5ed7;
+}
+
+/* Delete Button */
+.delete-btn {
+    background: #dc3545;
+}
+.delete-btn:hover {
+    background: #bb2d3b;
+}
+
+/* Stops Button */
+.stops-btn {
+    background: #198754;
+}
+.stops-btn:hover {
+    background: #157347;
+}
+
+/* Disable Button */
+.disable-btn {
+    background: #6c757d;
+}
+.disable-btn:hover {
+    background: #5a6268;
+}
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+*{
+      font-family: "Nunito", sans-serif;
+       font-optical-sizing: auto;
+       font-style: normal;
+        font-weight: 300;
+}
+
+
+/* Enable Button */
+.enable-btn {
+    background: #198754;
+}
+.enable-btn:hover {
+    background: #146c43;
+}
+
+
+    </style>
+</head>
+<body>
+    {% include 'navbar.html' %}
+
+<h2>Train List</h2>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Train Number</th>
+        <th>Train Name</th>
+        <th>Start Location</th>
+        <th>End Location</th>
+        <th>Start Time</th>
+        <th>End Time</th>
+        <th>Total Seats</th>
+        <th>Available Seats</th>
+         <th>Actions</th>
+    </tr>
+
+    {% for train in trains %}
+    {% if not train.is_active %}
+    <tr style="opacity:0.5; background:#ffe6e6;">
+
+        {% else %}
+        <tr>
+        {% endif %}
+        
+        <td>{{ train.id }}</td>
+        <td>{{train.train_number}}</td>
+        <td>{{ train.train_name }}</td>
+        <td>{{ train.from_place }}</td>
+        <td>{{ train.to_place }}</td>
+        <td>{{ train.departure_time }}</td>
+       
+        <td>{{ train.arrival_time }}</td>
+         <td>{{train.total_seats}}</td>
+        <td>{{ train.available_seats }}</td>
+         <td class="action-buttons">
+    <a href="{% url 'edit_train' train.id %}" class="btn edit-btn">Edit</a>
+    <a href="{% url 'delete_train' train.id %}" class="btn delete-btn" onclick="return confirm('Are you sure?');">Delete</a>
+    <a href="{% url 'train_stops' train.id %}" class="btn stops-btn">Stops</a>
+
+    {% if train.is_active %}
+        <a href="{% url 'toggle_train_status' train.id %}" class="btn disable-btn">Disable</a>
+    {% else %}
+        <a href="{% url 'toggle_train_status' train.id %}" class="btn enable-btn">Enable</a>
+    {% endif %}
+</td>
+
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="7">No trains available</td>
+    </tr>
+    {% endfor %}
+</table>
+
+</body>
+</html>

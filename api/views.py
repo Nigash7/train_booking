@@ -26,6 +26,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from django.http import HttpResponse
 from io import BytesIO
+from django.utils import timezone
 
 # from django.contrib.auth import get_user_model
 # print(get_user_model().objects.all())
@@ -155,6 +156,9 @@ def book_ticket(request):
     passenger_name = request.data.get("passenger_name")
     passenger_age = request.data.get("passenger_age")
     passenger_gender = request.data.get("passenger_gender")
+    booking_date = request.data.get("booking_date")
+    
+
 
     # Validate required fields
     if not all([train_id, seats, passenger_name, passenger_age, passenger_gender]):
@@ -180,7 +184,11 @@ def book_ticket(request):
         passenger_name=passenger_name,
         passenger_age=passenger_age,
         passenger_gender=passenger_gender,
-        total_price=total_price
+        total_price=total_price,
+        booking_date=timezone.now(),
+        travel_datetime=train.departure_time,
+        
+         
     )
 
     # Reduce available seats
@@ -190,7 +198,7 @@ def book_ticket(request):
     # Send confirmation email
     send_mail(
         subject="Train Ticket Booking Confirmation",
-        message=f"Your ticket has been booked.\nBooking ID: {booking_id}",
+        message=f"Your ticket has been booked.\nBooking ID: {booking_id}\n Train: {train.train_name}\nSeats: {seats}\nTotal Price: ₹{total_price}",
         from_email=settings.DEFAULT_FROM_EMAIL,
         recipient_list=[request.user.email],
         fail_silently=False,
@@ -218,26 +226,101 @@ def download_ticket(request, booking_id):
     buffer = BytesIO()
     p = canvas.Canvas(buffer, pagesize=A4)
 
-    p.setFont("Helvetica-Bold", 18)
-    p.drawString(200, 800, "TRAIN TICKET")
+    width, height = A4
+
+    # ===== HEADER SECTION =====
+    p.setFillColorRGB(0.2, 0.4, 0.8)  # Blue top bar
+    p.rect(0, height - 80, width, 80, fill=True, stroke=False)
+
+    p.setFillColorRGB(1, 1, 1)
+    p.setFont("Helvetica-Bold", 26)
+    p.drawString(40, height - 50, "TRAIN TICKET")
+
+    # ---- Sub Heading ----
+    p.setFont("Helvetica", 12)
+    p.drawString(40, height - 70, "Your Journey Details")
+
+    # ===== TICKET BOX =====
+    p.setFillColorRGB(0, 0, 0)
+    p.setLineWidth(2)
+    p.roundRect(30, height - 500, width - 60, 400, 20, stroke=True, fill=False)
+
+    y = height - 120
+    left_x = 50
+
+    # ===== BOOKING DETAILS =====
+    p.setFont("Helvetica-Bold", 14)
+    p.drawString(left_x, y, "Booking Information")
+    p.line(left_x, y - 5, width - 50, y - 5)
 
     p.setFont("Helvetica", 12)
-    p.drawString(50, 760, f"Booking ID: {booking.booking_id}")
-    p.drawString(50, 740, f"Passenger: {booking.passenger_name}")
-    p.drawString(50, 720, f"Age: {booking.passenger_age}")
-    p.drawString(50, 700, f"Gender: {booking.passenger_gender}")
-    p.drawString(50, 680, f"Seats: {booking.seats}")
-    p.drawString(50, 660, f"Total Price: ₹{booking.total_price}")
+    y -= 30
+    p.drawString(left_x, y, f"Booking ID: {booking.booking_id}")
+    y -= 20
+    p.drawString(left_x, y, f"Booking Date: {booking.booking_date.strftime('%Y-%m-%d %H:%M')}")
 
-    p.drawString(50, 620, f"Train: {booking.train.train_name}")
-    p.drawString(50, 600, f"Route: {booking.train.from_place} → {booking.train.to_place}")
-    p.drawString(50, 580, f"Departure: {booking.train.departure_time}")
+    # ===== PASSENGER DETAILS =====
+    y -= 40
+    p.setFont("Helvetica-Bold", 14)
+    p.drawString(left_x, y, "Passenger Details")
+    p.line(left_x, y - 5, width - 50, y - 5)
 
+    p.setFont("Helvetica", 12)
+    y -= 30
+    p.drawString(left_x, y, f"Name: {booking.passenger_name}")
+    y -= 20
+    p.drawString(left_x, y, f"Age: {booking.passenger_age}")
+    y -= 20
+    p.drawString(left_x, y, f"Gender: {booking.passenger_gender}")
+    y -= 20
+    p.drawString(left_x, y, f"Seats Booked: {booking.seats}")
+
+    # ===== TRAIN DETAILS =====
+    y -= 40
+    p.setFont("Helvetica-Bold", 14)
+    p.drawString(left_x, y, "Train Details")
+    p.line(left_x, y - 5, width - 50, y - 5)
+
+    p.setFont("Helvetica", 12)
+    y -= 30
+    p.drawString(left_x, y, f"Train: {booking.train.train_name}")
+    y -= 20
+    p.drawString(left_x, y, f"Route: {booking.train.from_place} → {booking.train.to_place}")
+
+    # Split date & time from DateTimeField
+    departure_date = booking.train.departure_time.strftime("%d-%m-%Y")
+    departure_time = booking.train.departure_time.strftime("%I:%M %p")
+
+    y -= 20
+    p.drawString(left_x, y, f"Departure Date: {departure_date}")
+    y -= 20
+    p.drawString(left_x, y, f"Departure Time: {departure_time}")
+
+    y -= 20
+    p.drawString(left_x, y, f"Total Price: ₹{booking.total_price}")
+
+
+    # status payment
+    payment_status = "Payment Status: Cash Payment at Station"
+
+    p.setFont("Helvetica-Bold", 14)
+    p.setFillColorRGB(0, 0, 0)
+    p.drawCentredString(width / 2, 80, payment_status)
+
+    # ===== FOOTER =====
+    p.setFillColorRGB(0.2, 0.4, 0.8)
+    p.rect(0, 0, width, 50, fill=True, stroke=False)
+
+    p.setFillColorRGB(1, 1, 1)
+    p.setFont("Helvetica", 12)
+    p.drawCentredString(width / 2, 20, "Thank you for booking with us. Have a safe journey!")
+
+    # ===== SAVE =====
     p.showPage()
     p.save()
 
     buffer.seek(0)
-
     return HttpResponse(buffer, content_type="application/pdf")
+
 
 # Create your views here.    

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delete Train</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+*{
+      font-family: "Nunito", sans-serif;
+       font-optical-sizing: auto;
+       font-style: normal;
+        font-weight: 300;
+}
+        body {
+            font-family: Arial;
+            background: #f8f8f8;
+            text-align: center;
+            padding-top: 80px;
+        }
+        .box {
+            width: 400px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px #ccc;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            color: white;
+            cursor: pointer;
+            margin: 5px;
+            border-radius: 5px;
+        }
+        .delete-btn {
+            background: #c0392b;
+        }
+        .cancel-btn {
+            background: gray;
+        }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>Delete Train</h2>
+    <p>Are you sure you want to delete the train:</p>
+    <h3>{{ train.name }}</h3>
+
+    <form method="POST">
+        {% csrf_token %}
+        <button class="delete-btn" type="submit">Yes, Delete</button>
+        <a href="{% url 'admin_home' %}">
+            <button class="cancel-btn" type="button">Cancel</button>
+        </a>
+    </form>
+</div>
+
+</body>
+</html>

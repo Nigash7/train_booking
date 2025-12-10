@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+*{
+      font-family: "Nunito", sans-serif;
+       font-optical-sizing: auto;
+       font-style: normal;
+        font-weight: 300;
+}
+        body{
+            width: 100vw;
+
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+           
+        }
+        div{
+             border: 2px solid black;
+             display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+           
+
+
+        }
+        ul{
+            padding: 0;
+        }
+     li,a{
+            font-style: none;
+            text-decoration: none;
+            padding:10px ;
+            background-color: rgb(144, 174, 238);
+            margin: 10px;
+            list-style-type: none;
+            border-radius: 10px;
+
+        }
+        .back-btn {
+    display: inline-block;
+    background: #6c757d;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 16px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    transition: 0.3s ease;
+    position: absolute;
+    top:0;
+    left:0;
+    margin: 10px;
+}
+
+.back-btn:hover {
+    background: #5a6268;
+    color: white;
+
+}
+    </style>
+</head>
+<body>
+    <a href="{% url 'adminhome' %}" class="back-btn">← Back to Home</a>
+    <div>
+    <h2 class="reports-title">Reports</h2>
+
+<ul class="reports-list">
+    <li><a href="{% url 'total_collection_by_date' %}">Total Collection by Date</a></li>
+    <li><a href="{% url 'train_collection_by_date' %}">Train Collection by Date</a></li>
+</ul>
+</div>
+    
+</body>
+</html>
+
+
+
+
